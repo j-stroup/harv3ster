@@ -11,13 +11,14 @@ logging.basicConfig(
 
 urls_to_visit = []
 visited_urls = []
+emails = []
 
 
 # Parse HTML
 def get_linked_urls(url, html):
     soup = BeautifulSoup(html, 'html.parser')
 
-    # Find linked urls
+    # Find linked urls and email addresses
     links = soup.find_all('a')
     for link in links:
         path = link.get('href')
@@ -25,9 +26,21 @@ def get_linked_urls(url, html):
             path = urljoin(url, path)
         if path and path.endswith('.jpg'):
             pass
+        if path and path.endswith('.pdf'):
+            pass
+        if path and path.startswith('mailto:'):
+            path = path.replace('mailto:', '')
+            if path not in emails:
+                emails.append(path)
+                with open('emails.txt', 'a', encoding='utf-8') as f:
+                    f.write(f'\n{path}')
+                    f.close()
+            else:
+                pass
         else:
             yield path
 
+"""
     # Find <p> text
     ptags = soup.find_all('p')
     for soup in ptags:
@@ -36,6 +49,7 @@ def get_linked_urls(url, html):
             with open('words.txt', 'a', encoding='utf-8') as f:
                 f.write(f'\n{text}')
                 f.close()
+"""
 
 # Add discovered url to list if not already crawled
 def add_url_to_visit(url):
