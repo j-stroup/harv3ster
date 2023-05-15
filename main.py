@@ -26,10 +26,18 @@ def get_linked_urls(url, html):
             path = urljoin(url, path)
         if path and path.endswith('.jpg'):
             pass
+        if path and path.startswith('#'):
+            pass
         if path and path.endswith('.pdf'):
             pass
+        if path and path.endswith('.txt'):
+            r = requests.get(path)
+            with open(path, 'wb') as f:
+                f.write(r.content)
         if path and path.startswith('mailto:'):
             path = path.replace('mailto:', '')
+            path = path.split('?')
+            path = path[0]
             if path not in emails:
                 emails.append(path)
                 with open('emails.txt', 'a', encoding='utf-8') as f:
